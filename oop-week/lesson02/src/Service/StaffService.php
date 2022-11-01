@@ -13,8 +13,8 @@ use lesson02\src\Repository\EmployeeRepository;
 
 class StaffService
 {
-    private EmployeeRepository $employeeRepository;
-    private IdGenerator $idGenerator;
+    protected EmployeeRepository $employeeRepository;
+    protected IdGenerator $idGenerator;
 
     public function __construct(EmployeeRepository $employeeRepository, IdGenerator $idGenerator)
     {
