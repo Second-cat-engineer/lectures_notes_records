@@ -1,0 +1,7 @@
+{
+  "autoload": {
+    "psr-4": {
+      "lesson04\\example01\\demo03\\": ""
+    }
+  }
+}
