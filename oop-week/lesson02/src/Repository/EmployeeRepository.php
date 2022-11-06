@@ -18,7 +18,7 @@ class EmployeeRepository
             (new IdGenerator())->nextId(),
             new Name('Safuan', 'Yaylyaev'),
             new PhoneCollection([new Phone(7, '1234567890')]),
-            new Address('Russia', 'Moscow', 'Moscow', 'test', 1)
+            new Address('Russia', 'Moscow', 'Moscow', 'tests', 1)
         );
     }
 

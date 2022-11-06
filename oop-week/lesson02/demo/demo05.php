@@ -161,7 +161,7 @@ $service = new StaffService();
 $employee = $service->recruitEmployee(
     new Name('Safuan', 'Yaylyaev'),
     new Phone(7, '1234567890'),
-    new Address('Russia', 'Moscow', 'Moscow', 'test', 1)
+    new Address('Russia', 'Moscow', 'Moscow', 'tests', 1)
 );
 echo $employee->getName()->getFull();
 
