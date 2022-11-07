@@ -1,0 +1,10 @@
+{
+  "autoload": {
+    "psr-4": {
+      "lesson04\\example01\\demo06\\": ""
+    }
+  },
+  "require": {
+    "phpunit/phpunit": "8.5.23"
+  }
+}
