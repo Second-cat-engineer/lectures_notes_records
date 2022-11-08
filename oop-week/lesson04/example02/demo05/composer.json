@@ -1,0 +1,17 @@
+{
+  "autoload": {
+    "psr-4": {
+      "lesson04\\example02\\": "../"
+    }
+  },
+  "require": {
+    "yidas/yii2-jquery": "*",
+    "yidas/yii2-bower-asset": "*",
+    "yiisoft/yii2": "~2.0.14"
+  },
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true
+    }
+  }
+}
