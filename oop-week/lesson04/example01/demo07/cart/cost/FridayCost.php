@@ -4,18 +4,18 @@ namespace lesson04\example01\demo07\cart\cost;
 
 class FridayCost implements CalculatorInterface
 {
-    private $next;
-    private $percent;
+    private CalculatorInterface $next;
+    private float $percent;
     private $date;
 
-    public function __construct(CalculatorInterface $next, $percent, $date)
+    public function __construct(CalculatorInterface $next, float $percent, $date)
     {
         $this->next = $next;
         $this->date = $date;
         $this->percent = $percent;
     }
 
-    public function getCost($items)
+    public function getCost($items): float|int
     {
         $now = \DateTime::createFromFormat('Y-m-d', $this->date);
         if ($now->format('l') == 'Friday') {

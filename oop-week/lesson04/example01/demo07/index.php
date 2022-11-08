@@ -2,6 +2,7 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 use lesson04\example01\demo07\cart\Cart;
+use lesson04\example01\demo07\cart\cost\BigCost;
 use lesson04\example01\demo07\cart\cost\BirthdayCost;
 use lesson04\example01\demo07\cart\cost\FridayCost;
 use lesson04\example01\demo07\cart\cost\MinCost;
@@ -10,12 +11,12 @@ use lesson04\example01\demo07\cart\cost\SimpleCost;
 use lesson04\example01\demo07\cart\storage\SessionStorage;
 
 $storage = new SessionStorage('cart');
-$calculator = new SimpleCost();
 
 $simpleCost = new SimpleCost();
 $calculator = new MinCost(
     new FridayCost($simpleCost, 5, date('Y-m-d')),
-    new NewYearCost($simpleCost, date('m'), 3)
+    new NewYearCost($simpleCost, date('m'), 3),
+    new BigCost($simpleCost, 100, 20)
 );
 
 //if (!Yii::$app->user->isGuest) {

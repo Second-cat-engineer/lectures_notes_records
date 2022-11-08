@@ -4,18 +4,18 @@ namespace lesson04\example01\demo07\cart\cost;
 
 class BigCost implements CalculatorInterface
 {
-    private $next;
+    private CalculatorInterface $next;
     private $limit;
-    private $percent;
+    private float $percent;
 
-    public function __construct(CalculatorInterface $next, $limit, $percent)
+    public function __construct(CalculatorInterface $next, $limit, float $percent)
     {
         $this->next = $next;
         $this->limit = $limit;
         $this->percent = $percent;
     }
 
-    public function getCost($items)
+    public function getCost($items): float|int
     {
         $cost = $this->next->getCost($items);
         if ($cost > $this->limit) {
