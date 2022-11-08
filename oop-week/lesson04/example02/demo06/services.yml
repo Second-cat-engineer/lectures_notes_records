@@ -1,0 +1,16 @@
+parameters:
+  cart.storage.session_key: cart
+
+services:
+  cart.storage.session:
+    class: lesson04\example02\cart\storage\SessionStorage
+    arguments: ['%cart.storage.session_key%']
+    # shared: false
+
+  cart.calculator:
+    class: lesson04\example02\cart\cost\SimpleCost
+
+  cart:
+    class: lesson04\example02\cart\Cart
+    arguments: ['@cart.storage.session', '@cart.calculator']
+    # autowire: true

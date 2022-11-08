@@ -1,0 +1,12 @@
+{
+  "autoload": {
+    "psr-4": {
+      "lesson04\\example02\\": "../"
+    }
+  },
+  "require": {
+    "symfony/dependency-injection": "5.4",
+    "symfony/yaml": "*",
+    "symfony/config": "*"
+  }
+}

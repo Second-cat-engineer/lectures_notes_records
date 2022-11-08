@@ -12,16 +12,6 @@ ___
 Для чего придумали ООП? Для упрощения сложности и для дополнительного уровня абстракции.
 ___
 
-
-Итого у нас лёгкость модификации, повторного использования в других проектах (без переписывания), тестирования,
-написания и чтения. Какими методами мы добились?
-- Разделили код на универсальный и изменчивый
-- Инкапсулировали изменчивость
-- Разделили код по логическим обязанностям. Корзина ведёт элементы, их сохраняет и подсчитывает.
-- Разбили по обязанностям на корзину, хранилище и калькулятор.
-- Определили интерфейсы для изменчивых реализаций и переключились на них.
-___
-
 ### Пример с корзиной интернет магазина
 
 [Как бы это было без ООП](./example01/demo01/CartController.php)
@@ -188,11 +178,101 @@ $cart = $container->get('cart');
 Рассмотрение версий Pimple 1-й и 3-й версии (то что сначала все было динамически (создание каждый раз),
 а теперь все хранится в одном экземпляре).
 
-[Рассмотрение контейнера Yii2](./example02/demo05/index.php)
+[Рассмотрен контейнера Yii2](./example02/demo05/index.php)
 
+[Рассмотрен контейнер Symfony](./example02/demo06/index.php). Второй вариант - зависимости в yml файле.
 
+___
 
+### Как теперь корзину привязать к контроллеру?
 
+```php
+class CartController
+{
+    public function actionIndex()
+    {
+        $cart = new Cart(new SessionStorage('cart'), new SimpleCost());
+        return $cart->getItems();
+    }
+
+    public function actionAdd($id, $count, $price)
+    {
+        $cart = new Cart(new SessionStorage('cart'), new SimpleCost());
+        $cart->add($id, $count, $price);
+        return 'OK';
+    }
+} 
+```
+
+```php
+class CartController extends Controller
+{
+    public function actionIndex()
+    {
+        $cart = $this->container->get('cart');
+        return $cart->getItems();
+    }
+
+    public function actionAdd($id, $count, $price)
+    {
+        $cart = $this->container->get('cart');
+        $cart->add($id, $count, $price);
+        return 'OK';
+    }
+}
+```
+
+```php
+class CartController extends Controller
+{
+    public function actionIndex()
+    {
+        $cart = Yii::createObject('lesson04\example04\cart\Cart');
+        return $cart->getItems();
+    }
+
+    public function actionAdd($id, $count, $price)
+    {
+        $cart = Yii::createObject('lesson04\example04\cart\Cart');
+        $cart->add($id, $count, $price);
+        return 'OK';
+    }
+}
+```
+
+```php
+class CartController extends Controller
+{
+    private $cart;
+
+    public function __construct($id, $module, Cart $cart, $config = [])
+    {
+        $this->cart = $cart;
+        parent::__construct($id, $module, $config);
+    }
+
+    public function actionIndex()
+    {
+        return $this->cart->getItems();
+    }
+
+    public function actionAdd($id, $count, $price)
+    {
+        $this->cart->add($id, $count, $price);
+        return 'OK';
+    }
+}
+```
+___
+
+Итого у нас лёгкость модификации, повторного использования в других проектах (без переписывания), тестирования,
+написания и чтения. Какими методами мы добились?
+- Разделили код на универсальный и изменчивый
+- Инкапсулировали изменчивость
+- Разделили код по логическим обязанностям. Корзина ведёт элементы, их сохраняет и подсчитывает.
+- Разбили по обязанностям на корзину, хранилище и калькулятор.
+- Определили интерфейсы для изменчивых реализаций и переключились на них.
+___
 
 ___
 ### SOLID
