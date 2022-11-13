@@ -529,7 +529,27 @@ ___
 - Создание и обработка событий (Event);
 - Использование исключений (Exception);
 - Делаем однонаправленные зависимости;
+```txt 
+             UserSignupEvent
+             public $user;
+      ----[посредник] -----
+     /       /   \        \
+    /       /     \        \
+   /       /       \        \
+[user]   [   ]    [   ]   [shop buyer].addBuyer($event->user->email, $event->user->name)
+```
+
 - Связи между уровнями абстракции.
+```txt
+              ------  Cart ------ StorageInterface (load() save())             ---- $_SESSION['cart']
+             /
+ShopService  -------  MailerInterface send($email, $message)                   -----  new SwiftMailer(...)
+            \                                                                  \----- mail($email)
+             \
+              ------  SmsSenderInterface send($phone, $message)                --- new MTSSender { new SoapClient($wsdl) }
+                                                                               \-- new MegafonSender ( ... } 
+```
+
 
 ___
 
