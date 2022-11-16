@@ -1,5 +1,6 @@
 # phpstorm project files
 .idea
+.env
 
 # netbeans project files
 nbproject
@@ -31,3 +32,4 @@ tests/_support/_generated
 
 #vagrant folder
 /.vagrant
+/secrets/secrets.json
