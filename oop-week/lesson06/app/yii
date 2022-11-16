@@ -14,6 +14,12 @@ defined('YII_ENV') or define('YII_ENV', 'dev');
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/vendor/yiisoft/yii2/Yii.php';
 
+// Vault secret loading
+\KebaCorp\VaultSecret\VaultSecret::load(
+    '/secrets/secrets.json',
+    ['saveTemplateFilename' => '/../secrets/secrets.example.json']
+);
+
 $config = require __DIR__ . '/config/console.php';
 
 $application = new yii\console\Application($config);
