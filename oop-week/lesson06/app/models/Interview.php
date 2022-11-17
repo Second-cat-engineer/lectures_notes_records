@@ -41,7 +41,11 @@ class Interview extends ActiveRecord
             [['date', 'first_name', 'last_name'], 'required'],
             [['status'], 'required', 'except' => self::SCENARIO_CREATE],
             [['status'], 'default', 'value' => self::STATUS_NEW],
-            [['date'], 'safe'],
+            [
+                ['date'],
+                'date',
+                'format' => 'php:Y-m-d'
+            ],
             [['reject_reason'], 'required', 'when' => function (self $model) {
                 return $model->status == self::STATUS_REJECT;
             }, 'whenClient' => "function (attribute, value) {

@@ -41,7 +41,8 @@ class Contract extends ActiveRecord
             ],
             [
                 ['date_open', 'date_close'],
-                'date'
+                'date',
+                'format' => 'php:Y-m-d'
             ],
             [
                 ['close_reason'],

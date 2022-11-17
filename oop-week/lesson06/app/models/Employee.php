@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
@@ -27,6 +28,12 @@ class Employee extends ActiveRecord
     const STATUS_WORK = 2;
     const STATUS_VACATION = 3;
     const STATUS_DISMISS = 4;
+
+    const SCENARIO_CREATE = 'create';
+
+    public $order_date;
+    public $contract_date;
+    public $recruit_date;
 
     /**
      * @inheritdoc
@@ -54,6 +61,16 @@ class Employee extends ActiveRecord
                 ['first_name', 'last_name', 'address', 'email'],
                 'string', 'max' => 255
             ],
+            [
+                ['order_date', 'contract_date', 'recruit_date'],
+                'required',
+                'on' => self::SCENARIO_CREATE
+            ],
+            [
+                ['order_date', 'contract_date', 'recruit_date'],
+                'date',
+                'on' => self::SCENARIO_CREATE
+            ],
         ];
     }
 
@@ -69,6 +86,9 @@ class Employee extends ActiveRecord
             'address' => 'Address',
             'email' => 'Email',
             'status' => 'Status',
+            'order_date' => 'Order Date',
+            'contract_date' => 'Contract Date',
+            'recruit_date' => 'Recruit Date',
         ];
     }
 
@@ -102,4 +122,48 @@ class Employee extends ActiveRecord
         return $this->hasMany(Vacation::class, ['employee_id' => 'id']);
     }
 
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {
+            if ($this->status == self::STATUS_PROBATION) {
+                if ($this->email) {
+                    Yii::$app->mailer->compose('employee/probation', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are recruit on probation!')
+                        ->send();
+
+                    $log = new Log();
+                    $log->message = $this->last_name . ' ' . $this->first_name . ' is joined to interview';
+                    $log->save();
+                }
+            } elseif ($this->status == self::STATUS_WORK) {
+                if ($this->email) {
+                    Yii::$app->mailer->compose('employee/work', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are recruit!')
+                        ->send();
+
+                    $log = new Log();
+                    $log->message = $this->last_name . ' ' . $this->first_name . ' is passed an interview';
+                    $log->save();
+                }
+            } elseif ($this->status == self::STATUS_DISMISS) {
+                if ($this->email) {
+                    Yii::$app->mailer->compose('employee/dismiss', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are dismiss')
+                        ->send();
+
+                    $log = new Log();
+                    $log->message = $this->last_name . ' ' . $this->first_name . ' you are dismiss';
+                    $log->save();
+                }
+            }
+        }
+
+        parent::afterSave($insert, $changedAttributes);
+    }
 }

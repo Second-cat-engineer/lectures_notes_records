@@ -43,7 +43,8 @@ class Dismiss extends ActiveRecord
             ],
             [
                 ['date'],
-                'safe'
+                'date',
+                'format' => 'php:Y-m-d'
             ],
             [
                 ['reason'],

@@ -39,7 +39,8 @@ class Order extends ActiveRecord
             ],
             [
                 ['date'],
-                'safe'
+                'date',
+                'format' => 'php:Y-m-d'
             ],
         ];
     }

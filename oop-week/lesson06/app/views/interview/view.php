@@ -1,6 +1,7 @@
 <?php
 
 use app\helpers\InterviewHelper;
+use app\models\Interview;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -17,6 +18,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php if ($model->status != Interview::STATUS_PASS): ?>
+            <?= Html::a('Recruit', ['employee/create', 'interview_id' => $model->id], ['class' => 'btn btn-success']) ?>
+        <?php endif; ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [

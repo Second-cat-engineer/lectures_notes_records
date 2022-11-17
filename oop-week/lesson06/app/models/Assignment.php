@@ -51,7 +51,8 @@ class Assignment extends ActiveRecord
             ],
             [
                 ['date'],
-                'safe'
+                'date',
+                'format' => 'php:Y-m-d'
             ],
             [
                 ['rate'],
