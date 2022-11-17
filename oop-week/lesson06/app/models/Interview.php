@@ -17,6 +17,10 @@ use yii\db\ActiveRecord;
  */
 class Interview extends ActiveRecord
 {
+    const STATUS_NEW = 1;
+    const STATUS_PASS = 2;
+    const STATUS_REJECT = 3;
+
     /**
      * @inheritdoc
      */

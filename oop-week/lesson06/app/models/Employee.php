@@ -23,6 +23,11 @@ use yii\db\ActiveRecord;
  */
 class Employee extends ActiveRecord
 {
+    const STATUS_PROBATION = 1;
+    const STATUS_WORK = 2;
+    const STATUS_VACATION = 3;
+    const STATUS_DISMISS = 4;
+
     /**
      * @inheritdoc
      */
@@ -65,6 +70,11 @@ class Employee extends ActiveRecord
             'email' => 'Email',
             'status' => 'Status',
         ];
+    }
+
+    public function getFullName(): string
+    {
+        return $this->last_name . ' ' . $this->first_name;
     }
 
     public function getAssignments(): ActiveQuery

@@ -2,17 +2,16 @@
 
 use app\models\Employee;
 use app\models\Order;
-use app\models\Position;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Assignment */
+/* @var $model app\models\Vacation */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="assignment-form">
+<div class="vacation-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
@@ -20,15 +19,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'employee_id')->dropDownList(ArrayHelper::map(Employee::find()->all(), 'id', 'fullName')) ?>
 
-    <?= $form->field($model, 'position_id')->dropDownList(ArrayHelper::map(Position::find()->asArray()->all(), 'id', 'name')) ?>
+    <?= $form->field($model, 'date_from')->textInput() ?>
 
-    <?= $form->field($model, 'date')->textInput() ?>
-
-    <?= $form->field($model, 'rate')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'salary')->textInput() ?>
-
-    <?= $form->field($model, 'active')->checkbox() ?>
+    <?= $form->field($model, 'date_to')->textInput() ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
