@@ -26,7 +26,7 @@ use yii\widgets\ActiveForm;
 
     <?php if ($model->getScenario() == Interview::SCENARIO_DEFAULT): ?>
 
-        <?= $form->field($model, 'status')->dropDownList(InterviewHelper::getStatusList()) ?>
+        <?= $form->field($model, 'status')->dropDownList($model->getNextStatusList()) ?>
 
         <?= $form
             ->field($model, 'employee_id')

@@ -71,6 +71,26 @@ class Interview extends ActiveRecord
         ];
     }
 
+    public function getNextStatusList(): array
+    {
+        if ($this->status == self::STATUS_PASS) {
+            return [
+                self::STATUS_PASS => 'Passed',
+            ];
+        } elseif ($this->status == self::STATUS_REJECT) {
+            return [
+                self::STATUS_PASS => 'Passed',
+                self::STATUS_REJECT => 'Rejected',
+            ];
+        } else {
+            return [
+                self::STATUS_NEW => 'New',
+                self::STATUS_PASS => 'Passed',
+                self::STATUS_REJECT => 'Rejected',
+            ];
+        }
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {
@@ -82,13 +102,25 @@ class Interview extends ActiveRecord
                 $view = 'interview/join';
                 $subject = 'You are joined to interview!';
 
+                $log = new Log();
+                $log->message = $this->last_name . ' ' . $this->first_name . ' is joined to interview';
+                $log->save();
+
             } elseif ($this->status == self::STATUS_PASS) {
                 $view = 'interview/pass';
                 $subject = 'You are passed an interview!';
 
+                $log = new Log();
+                $log->message = $this->last_name . ' ' . $this->first_name . ' is passed an interview';
+                $log->save();
+
             } elseif ($this->status == self::STATUS_REJECT) {
                 $view = 'interview/reject';
                 $subject = 'You are failed an interview';
+
+                $log = new Log();
+                $log->message = $this->last_name . ' ' . $this->first_name . ' is failed an interview';
+                $log->save();
             }
 
             if ($this->email && !is_null($view)) {
