@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use Yii;
 use yii\db\ActiveRecord;
 
 /**
@@ -17,6 +18,8 @@ use yii\db\ActiveRecord;
  */
 class Interview extends ActiveRecord
 {
+    const SCENARIO_CREATE = 'create';
+
     const STATUS_NEW = 1;
     const STATUS_PASS = 2;
     const STATUS_REJECT = 3;
@@ -35,27 +38,19 @@ class Interview extends ActiveRecord
     public function rules(): array
     {
         return [
-            [
-                ['date', 'first_name', 'last_name', 'status'],
-                'required'
+            [['date', 'first_name', 'last_name'], 'required'],
+            [['status'], 'required', 'except' => self::SCENARIO_CREATE],
+            [['status'], 'default', 'value' => self::STATUS_NEW],
+            [['date'], 'safe'],
+            [['reject_reason'], 'required', 'when' => function (self $model) {
+                return $model->status == self::STATUS_REJECT;
+            }, 'whenClient' => "function (attribute, value) {
+                    return $('#interview-status').val() == '" . self::STATUS_REJECT. "';
+                }"
             ],
-            [
-                ['date'],
-                'safe'
-            ],
-            [
-                ['status', 'employee_id'],
-                'integer'
-            ],
-            [
-                ['first_name', 'last_name', 'email'],
-                'string',
-                'max' => 255
-            ],
-            [
-                ['reject_reason'],
-                'string'
-            ],
+            [['status', 'employee_id'], 'integer', 'except' => self::SCENARIO_CREATE],
+            [['first_name', 'last_name', 'email'], 'string', 'max' => 255],
+            [['reject_reason'], 'string'],
         ];
     }
 
@@ -74,5 +69,37 @@ class Interview extends ActiveRecord
             'reject_reason' => 'Reject Reason',
             'employee_id' => 'Employee',
         ];
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {
+
+            $view = null;
+            $subject = '';
+
+            if ($this->status == self::STATUS_NEW) {
+                $view = 'interview/join';
+                $subject = 'You are joined to interview!';
+
+            } elseif ($this->status == self::STATUS_PASS) {
+                $view = 'interview/pass';
+                $subject = 'You are passed an interview!';
+
+            } elseif ($this->status == self::STATUS_REJECT) {
+                $view = 'interview/reject';
+                $subject = 'You are failed an interview';
+            }
+
+            if ($this->email && !is_null($view)) {
+                Yii::$app->mailer->compose($view, ['model' => $this])
+                    ->setFrom(Yii::$app->params['adminEmail'])
+                    ->setTo($this->email)
+                    ->setSubject($subject)
+                    ->send();
+            }
+        }
+
+        parent::afterSave($insert, $changedAttributes);
     }
 }

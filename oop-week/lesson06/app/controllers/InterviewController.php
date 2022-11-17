@@ -64,6 +64,8 @@ class InterviewController extends Controller
     public function actionCreate()
     {
         $model = new Interview();
+        $model->setScenario(Interview::SCENARIO_CREATE);
+        $model->date = date('Y-m-d');
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
