@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\forms\InterviewJoinForm;
+use app\services\StaffService;
 use Yii;
 use app\models\Interview;
 use app\forms\search\InterviewSearch;
@@ -61,19 +63,26 @@ class InterviewController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionJoin()
     {
-        $model = new Interview();
-        $model->setScenario(Interview::SCENARIO_CREATE);
-        $model->date = date('Y-m-d');
+        $form = new InterviewJoinForm();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            $service = new StaffService();
+
+            $model = $service->joinToInterview(
+                $form->lastName,
+                $form->firstName,
+                $form->email,
+                $form->date
+            );
+
             return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
         }
+
+        return $this->render('join', [
+            'joinForm' => $form,
+        ]);
     }
 
     /**

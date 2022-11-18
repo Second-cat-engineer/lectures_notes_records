@@ -95,44 +95,53 @@ class Interview extends ActiveRecord
         }
     }
 
+    public static function join($lastName, $firstName, $email, $date): Interview
+    {
+        $interview = new Interview();
+        $interview->date = $date;
+        $interview->last_name = $lastName;
+        $interview->first_name = $firstName;
+        $interview->email = $email;
+        $interview->status = Interview::STATUS_NEW;
+        return $interview;
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {
 
-            $view = null;
-            $subject = '';
-
             if ($this->status == self::STATUS_NEW) {
-                $view = 'interview/join';
-                $subject = 'You are joined to interview!';
 
-                $log = new Log();
-                $log->message = $this->last_name . ' ' . $this->first_name . ' is joined to interview';
-                $log->save();
+                // Логика вынесена в метод joinToInterview() класса StaffService
 
             } elseif ($this->status == self::STATUS_PASS) {
-                $view = 'interview/pass';
-                $subject = 'You are passed an interview!';
+
+
+                if ($this->email) {
+                    Yii::$app->mailer->compose('interview/pass', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are passed an interview!')
+                        ->send();
+                }
 
                 $log = new Log();
                 $log->message = $this->last_name . ' ' . $this->first_name . ' is passed an interview';
                 $log->save();
 
             } elseif ($this->status == self::STATUS_REJECT) {
-                $view = 'interview/reject';
-                $subject = 'You are failed an interview';
+
+                if ($this->email) {
+                    Yii::$app->mailer->compose('interview/reject', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are failed an interview')
+                        ->send();
+                }
 
                 $log = new Log();
                 $log->message = $this->last_name . ' ' . $this->first_name . ' is failed an interview';
                 $log->save();
-            }
-
-            if ($this->email && !is_null($view)) {
-                Yii::$app->mailer->compose($view, ['model' => $this])
-                    ->setFrom(Yii::$app->params['adminEmail'])
-                    ->setTo($this->email)
-                    ->setSubject($subject)
-                    ->send();
             }
         }
 
