@@ -34,4 +34,11 @@ class InterviewRepository
             throw new \RuntimeException('Saving error.');
         }
     }
+
+    public function delete(Interview $interview): void
+    {
+        if (!$interview->delete()) {
+            throw new \RuntimeException('Deleting error.');
+        }
+    }
 }

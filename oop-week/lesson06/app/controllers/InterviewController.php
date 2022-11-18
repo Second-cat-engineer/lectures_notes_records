@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\forms\InterviewEditForm;
 use app\forms\InterviewJoinForm;
+use app\forms\InterviewMoveForm;
 use app\forms\InterviewRejectForm;
 use app\services\StaffService;
 use Yii;
@@ -103,6 +104,24 @@ class InterviewController extends Controller
         ]);
     }
 
+    public function actionMove($id)
+    {
+        $interview = $this->findModel($id);
+        $form = new InterviewMoveForm($interview);
+
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+
+            $this->staffService->moveInterview($interview->id, $form->date);
+
+            return $this->redirect(['view', 'id' => $interview->id]);
+        }
+
+        return $this->render('move', [
+            'moveForm' => $form,
+            'model' => $interview,
+        ]);
+    }
+
     public function actionReject($id)
     {
         $interview = $this->findModel($id);
@@ -123,7 +142,8 @@ class InterviewController extends Controller
 
     public function actionDelete(int $id)
     {
-        $this->findModel($id)->delete();
+        $interview = $this->findModel($id);
+        $this->staffService->deleteInterview($interview->id);
 
         return $this->redirect(['index']);
     }

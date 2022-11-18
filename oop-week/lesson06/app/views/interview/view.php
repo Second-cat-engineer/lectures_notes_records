@@ -18,10 +18,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Edit', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?php if ($model->status != Interview::STATUS_PASS): ?>
+        <?php if ($model->isNew()): ?>
+            <?= Html::a('Move', ['interview/move', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?php endif; ?>
+        <?php if ($model->isPassed()): ?>
             <?= Html::a('Recruit', ['employee/create', 'interview_id' => $model->id], ['class' => 'btn btn-success']) ?>
         <?php endif; ?>
-        <?php if ($model->status != Interview::STATUS_REJECT): ?>
+        <?php if ($model->isNew()): ?>
             <?= Html::a('Reject', ['reject', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
         <?php endif; ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [

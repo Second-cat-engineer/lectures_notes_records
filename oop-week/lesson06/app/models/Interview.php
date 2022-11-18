@@ -47,26 +47,6 @@ class Interview extends ActiveRecord
         ];
     }
 
-    public function getNextStatusList(): array
-    {
-        if ($this->status == self::STATUS_PASS) {
-            return [
-                self::STATUS_PASS => 'Passed',
-            ];
-        } elseif ($this->status == self::STATUS_REJECT) {
-            return [
-                self::STATUS_PASS => 'Passed',
-                self::STATUS_REJECT => 'Rejected',
-            ];
-        } else {
-            return [
-                self::STATUS_NEW => 'New',
-                self::STATUS_PASS => 'Passed',
-                self::STATUS_REJECT => 'Rejected',
-            ];
-        }
-    }
-
     public static function join($lastName, $firstName, $email, $date): Interview
     {
         $interview = new Interview();
@@ -85,6 +65,13 @@ class Interview extends ActiveRecord
         $this->email = $email;
     }
 
+    public function move($date)
+    {
+        $this->guardIsNew();
+        $this->guardNotCurrentDate($date);
+        $this->date = $date;
+    }
+
     public function reject($reason)
     {
         $this->guardIsNotRejected();
@@ -92,11 +79,45 @@ class Interview extends ActiveRecord
         $this->status = self::STATUS_REJECT;
     }
 
+    public function remove()
+    {
+
+    }
+
+    private function guardNotCurrentDate($date)
+    {
+        if ($date === $this->date) {
+            throw new \DomainException('Date is current.');
+        }
+    }
+
+    private function guardIsNew()
+    {
+        if (!$this->isNew()) {
+            throw new \DomainException('Interview is not new.');
+        }
+    }
+
     private function guardIsNotRejected()
     {
-        if ($this->status == self::STATUS_REJECT) {
+        if (!$this->isRejected()) {
             throw new \DomainException('Interview is already rejected.');
         }
+    }
+
+    public function isNew()
+    {
+        return $this->status === Interview::STATUS_NEW;
+    }
+
+    public function isPassed()
+    {
+        return $this->status === Interview::STATUS_PASS;
+    }
+
+    public function isRejected()
+    {
+        return $this->status === Interview::STATUS_REJECT;
     }
 
     public function afterSave($insert, $changedAttributes)
