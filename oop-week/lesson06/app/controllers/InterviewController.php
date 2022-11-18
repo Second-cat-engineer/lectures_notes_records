@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\forms\InterviewEditForm;
 use app\forms\InterviewJoinForm;
 use app\services\StaffService;
 use Yii;
@@ -93,15 +94,26 @@ class InterviewController extends Controller
      */
     public function actionUpdate(int $id)
     {
-        $model = $this->findModel($id);
+        $interview = $this->findModel($id);
+        $form = new InterviewEditForm($interview);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+
+            $service = new StaffService();
+            $service->editInterview(
+                $interview->id,
+                $form->lastName,
+                $form->firstName,
+                $form->email
+            );
+
+            return $this->redirect(['view', 'id' => $interview->id]);
         }
+
+        return $this->render('update', [
+            'editForm' => $form,
+            'model' => $interview,
+        ]);
     }
 
     /**

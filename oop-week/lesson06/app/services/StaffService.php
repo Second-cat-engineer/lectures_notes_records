@@ -27,4 +27,18 @@ class StaffService
 
         return $interview;
     }
+
+    public function editInterview($id, $lastName, $firstName, $email): void
+    {
+        if (!$interview = Interview::findOne($id)) {
+            throw new \DomainException('Interview not found');
+        }
+        $interview->editData($lastName, $firstName, $email);
+
+        $interview->save(false);
+
+        $log = new Log();
+        $log->message = 'Interview ' . $interview->id . ' is updated';
+        $log->save();
+    }
 }

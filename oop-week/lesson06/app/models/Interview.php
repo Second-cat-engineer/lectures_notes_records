@@ -106,6 +106,13 @@ class Interview extends ActiveRecord
         return $interview;
     }
 
+    public function editData($lastName, $firstName, $email)
+    {
+        $this->last_name = $lastName;
+        $this->first_name = $firstName;
+        $this->email = $email;
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {

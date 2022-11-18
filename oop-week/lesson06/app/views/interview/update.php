@@ -1,9 +1,11 @@
 <?php
 
+use yii\bootstrap5\ActiveForm;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Interview */
+/* @var $editForm app\forms\InterviewEditForm */
 
 $this->title = 'Update Interview: ' . $model->id;
 $this->params['breadcrumbs'][] = ['label' => 'Interviews', 'url' => ['index']];
@@ -14,8 +16,20 @@ $this->params['breadcrumbs'][] = 'Update';
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?= $this->render('_form', [
-        'model' => $model,
-    ]) ?>
+    <div class="interview-form">
+        <?php $form = ActiveForm::begin(); ?>
+
+        <?= $form->field($editForm, 'firstName')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($editForm, 'lastName')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($editForm, 'email')->textInput(['maxlength' => true]) ?>
+
+        <div class="form-group">
+            <?= Html::submitButton('Update', ['class' => 'btn btn-success']) ?>
+        </div>
+
+        <?php ActiveForm::end(); ?>
+    </div>
 
 </div>
