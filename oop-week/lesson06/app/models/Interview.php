@@ -18,8 +18,6 @@ use yii\db\ActiveRecord;
  */
 class Interview extends ActiveRecord
 {
-    const SCENARIO_CREATE = 'create';
-
     const STATUS_NEW = 1;
     const STATUS_PASS = 2;
     const STATUS_REJECT = 3;
@@ -30,32 +28,6 @@ class Interview extends ActiveRecord
     public static function tableName(): string
     {
         return '{{%interview}}';
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function rules(): array
-    {
-        return [
-            [['date', 'first_name', 'last_name'], 'required'],
-            [['status'], 'required', 'except' => self::SCENARIO_CREATE],
-            [['status'], 'default', 'value' => self::STATUS_NEW],
-            [
-                ['date'],
-                'date',
-                'format' => 'php:Y-m-d'
-            ],
-            [['reject_reason'], 'required', 'when' => function (self $model) {
-                return $model->status == self::STATUS_REJECT;
-            }, 'whenClient' => "function (attribute, value) {
-                    return $('#interview-status').val() == '" . self::STATUS_REJECT. "';
-                }"
-            ],
-            [['status', 'employee_id'], 'integer', 'except' => self::SCENARIO_CREATE],
-            [['first_name', 'last_name', 'email'], 'string', 'max' => 255],
-            [['reject_reason'], 'string'],
-        ];
     }
 
     /**
@@ -113,6 +85,20 @@ class Interview extends ActiveRecord
         $this->email = $email;
     }
 
+    public function reject($reason)
+    {
+        $this->guardIsNotRejected();
+        $this->reject_reason = $reason;
+        $this->status = self::STATUS_REJECT;
+    }
+
+    private function guardIsNotRejected()
+    {
+        if ($this->status == self::STATUS_REJECT) {
+            throw new \DomainException('Interview is already rejected.');
+        }
+    }
+
     public function afterSave($insert, $changedAttributes)
     {
         if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {
@@ -138,17 +124,7 @@ class Interview extends ActiveRecord
 
             } elseif ($this->status == self::STATUS_REJECT) {
 
-                if ($this->email) {
-                    Yii::$app->mailer->compose('interview/reject', ['model' => $this])
-                        ->setFrom(Yii::$app->params['adminEmail'])
-                        ->setTo($this->email)
-                        ->setSubject('You are failed an interview')
-                        ->send();
-                }
-
-                $log = new Log();
-                $log->message = $this->last_name . ' ' . $this->first_name . ' is failed an interview';
-                $log->save();
+                // Логика вынесена в StaffService
             }
         }
 

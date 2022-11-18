@@ -13,32 +13,56 @@ class StaffService
         $interview = Interview::join($lastName, $firstName, $email, $date);
         $interview->save(false);
 
-        if ($interview->email) {
-            Yii::$app->mailer->compose('interview/join', ['model' => $interview])
-                ->setFrom(Yii::$app->params['adminEmail'])
-                ->setTo($interview->email)
-                ->setSubject('You are joined to interview!')
-                ->send();
-        }
 
-        $log = new Log();
-        $log->message = $interview->last_name . ' ' . $interview->first_name . ' is joined to interview';
-        $log->save();
+        $this->notify($interview->email, 'interview/join', ['model' => $interview], 'You are joined to interview!');
+        $this->log($interview->last_name . ' ' . $interview->first_name . ' is joined to interview');
 
         return $interview;
     }
 
     public function editInterview($id, $lastName, $firstName, $email): void
     {
+        $interview = $this->findInterviewModel($id);
+        $interview->editData($lastName, $firstName, $email);
+        $interview->save(false);
+
+        $this->log('Interview ' . $interview->id . ' is updated');
+    }
+
+    public function rejectInterview($id, $reason): void
+    {
+        $interview = $this->findInterviewModel($id);
+        $interview->reject($reason);
+        $interview->save(false);
+
+
+        $this->notify($interview->email, 'interview/reject', ['model' => $interview], 'Your interview is rejected');
+        $this->log('Interview ' . $interview->id . ' is rejected');
+    }
+
+    private function findInterviewModel(int $id): Interview
+    {
         if (!$interview = Interview::findOne($id)) {
             throw new \DomainException('Interview not found');
         }
-        $interview->editData($lastName, $firstName, $email);
+        return $interview;
+    }
 
-        $interview->save(false);
-
+    private function log(string $message): void
+    {
         $log = new Log();
-        $log->message = 'Interview ' . $interview->id . ' is updated';
+        $log->message = $message;
         $log->save();
+    }
+
+    private function notify($email, $view, $params, $message): void
+    {
+        if ($email) {
+            Yii::$app->mailer->compose($view, $params)
+                ->setFrom(Yii::$app->params['adminEmail'])
+                ->setTo($email)
+                ->setSubject($message)
+                ->send();
+        }
     }
 }

@@ -21,6 +21,9 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php if ($model->status != Interview::STATUS_PASS): ?>
             <?= Html::a('Recruit', ['employee/create', 'interview_id' => $model->id], ['class' => 'btn btn-success']) ?>
         <?php endif; ?>
+        <?php if ($model->status != Interview::STATUS_REJECT): ?>
+            <?= Html::a('Reject', ['reject', 'id' => $model->id], ['class' => 'btn btn-danger']) ?>
+        <?php endif; ?>
         <?= Html::a('Delete', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
