@@ -18,6 +18,14 @@ use yii\filters\VerbFilter;
  */
 class InterviewController extends Controller
 {
+    private StaffService $staffService;
+
+    public function __construct($id, $module, StaffService $staffService, $config = [])
+    {
+        $this->staffService = $staffService;
+        parent::__construct($id, $module, $config = []);
+    }
+
     /**
      * @inheritdoc
      */
@@ -33,10 +41,6 @@ class InterviewController extends Controller
         ];
     }
 
-    /**
-     * Lists all Interview models.
-     * @return mixed
-     */
     public function actionIndex()
     {
         $searchModel = new InterviewSearch();
@@ -48,11 +52,6 @@ class InterviewController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single Interview model.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionView(int $id)
     {
         return $this->render('view', [
@@ -60,19 +59,13 @@ class InterviewController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Interview model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
     public function actionJoin()
     {
         $form = new InterviewJoinForm();
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-            $service = new StaffService();
 
-            $model = $service->joinToInterview(
+            $model = $this->staffService->joinToInterview(
                 $form->lastName,
                 $form->firstName,
                 $form->email,
@@ -87,12 +80,6 @@ class InterviewController extends Controller
         ]);
     }
 
-    /**
-     * Updates an existing Interview model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionUpdate(int $id)
     {
         $interview = $this->findModel($id);
@@ -100,8 +87,7 @@ class InterviewController extends Controller
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
 
-            $service = new StaffService();
-            $service->editInterview(
+            $this->staffService->editInterview(
                 $interview->id,
                 $form->lastName,
                 $form->firstName,
@@ -123,8 +109,8 @@ class InterviewController extends Controller
         $form = new InterviewRejectForm();
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-            $service = new StaffService();
-            $service->rejectInterview($interview->id, $form->reason);
+
+            $this->staffService->rejectInterview($interview->id, $form->reason);
 
             return $this->redirect(['view', 'id' => $interview->id]);
         }
@@ -135,12 +121,6 @@ class InterviewController extends Controller
         ]);
     }
 
-    /**
-     * Deletes an existing Interview model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionDelete(int $id)
     {
         $this->findModel($id)->delete();
