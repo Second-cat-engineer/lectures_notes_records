@@ -15,17 +15,11 @@ class StaffService
 {
     private InterviewRepository $interviewRepository;
     private EventDispatcherInterface $eventDispatcher;
-    private LoggerInterface $logger;
 
-    public function __construct(
-        InterviewRepository $interviewRepository,
-        EventDispatcherInterface $eventDispatcher,
-        LoggerInterface $logger
-    )
+    public function __construct(InterviewRepository $interviewRepository, EventDispatcherInterface $eventDispatcher)
     {
         $this->interviewRepository = $interviewRepository;
         $this->eventDispatcher = $eventDispatcher;
-        $this->logger = $logger;
     }
 
     public function joinToInterview($lastName, $firstName, $email, $date): Interview
@@ -34,8 +28,6 @@ class StaffService
         $this->interviewRepository->add($interview);
 
         $this->eventDispatcher->dispatch(new InterviewJoinEvent($interview));
-
-        $this->logger->log($interview->last_name . ' ' . $interview->first_name . ' is joined to interview');
 
         return $interview;
     }
@@ -47,8 +39,6 @@ class StaffService
         $this->interviewRepository->save($interview);
 
         $this->eventDispatcher->dispatch(new InterviewEditEvent($interview));
-
-        $this->logger->log('Interview ' . $interview->id . ' is updated');
     }
 
     public function moveInterview(int $id, $date): void
@@ -58,8 +48,6 @@ class StaffService
         $this->interviewRepository->save($interview);
 
         $this->eventDispatcher->dispatch(new InterviewMoveEvent($interview));
-
-        $this->logger->log('Interview ' . $interview->id . ' is moved on ' . $interview->date);
     }
 
     public function rejectInterview($id, $reason): void
@@ -69,8 +57,6 @@ class StaffService
         $this->interviewRepository->save($interview);
 
         $this->eventDispatcher->dispatch(new InterviewRejectEvent($interview));
-
-        $this->logger->log('Interview ' . $interview->id . ' is rejected');
     }
 
     public function deleteInterview(int $id): void
@@ -80,7 +66,5 @@ class StaffService
         $this->interviewRepository->delete($interview);
 
         $this->eventDispatcher->dispatch(new InterviewDeleteEvent($interview));
-
-        $this->logger->log('Interview ' . $interview->id . ' is removed');
     }
 }
