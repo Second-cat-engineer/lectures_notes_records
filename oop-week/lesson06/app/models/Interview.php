@@ -2,6 +2,7 @@
 
 namespace app\models;
 use Yii;
+use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
@@ -45,6 +46,11 @@ class Interview extends ActiveRecord
             'reject_reason' => 'Reject Reason',
             'employee_id' => 'Employee',
         ];
+    }
+
+    public function getEmployee(): ActiveQuery
+    {
+        return $this->hasOne(Employee::class, ['id' => 'employee_id']);
     }
 
     public static function join($lastName, $firstName, $email, $date): Interview
@@ -146,37 +152,5 @@ class Interview extends ActiveRecord
             return true;
         }
         return false;
-    }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-        if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {
-
-            if ($this->status == self::STATUS_NEW) {
-
-                // Логика вынесена в метод joinToInterview() класса StaffService
-
-            } elseif ($this->status == self::STATUS_PASS) {
-
-
-                if ($this->email) {
-                    Yii::$app->mailer->compose('interview/pass', ['model' => $this])
-                        ->setFrom(Yii::$app->params['adminEmail'])
-                        ->setTo($this->email)
-                        ->setSubject('You are passed an interview!')
-                        ->send();
-                }
-
-                $log = new Log();
-                $log->message = $this->last_name . ' ' . $this->first_name . ' is passed an interview';
-                $log->save();
-
-            } elseif ($this->status == self::STATUS_REJECT) {
-
-                // Логика вынесена в StaffService
-            }
-        }
-
-        parent::afterSave($insert, $changedAttributes);
     }
 }

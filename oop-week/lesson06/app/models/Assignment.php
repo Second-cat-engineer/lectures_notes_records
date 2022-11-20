@@ -113,4 +113,42 @@ class Assignment extends ActiveRecord
     {
         return $this->hasOne(Order::class, ['id' => 'order_id']);
     }
+
+    public static function create($employee, $position, Order $order, $salary, $rate, $startDate): Assignment
+    {
+        $assignment = new self();
+        $assignment->populateRelation('order', $order);
+        $assignment->populateRelation('employee', $employee);
+        $assignment->populateRelation('position', $position);
+        $assignment->salary = $salary;
+        $assignment->rate = $rate;
+        $assignment->date = $startDate;
+        $assignment->active = true;
+
+        return $assignment;
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $related = $this->getRelatedRecords();
+            /** @var Employee $employee */
+            if (isset($related['employee']) && $employee = $related['employee']) {
+                $employee->save();
+                $this->employee_id = $employee->id;
+            }
+            /** @var Order $order */
+            if (isset($related['order']) && $order = $related['order']) {
+                $order->save();
+                $this->order_id = $order->id;
+            }
+            /** @var Position $position */
+            if (isset($related['position']) && $position = $related['position']) {
+                $position->save();
+                $this->position_id = $position->id;
+            }
+            return true;
+        }
+        return false;
+    }
 }

@@ -65,15 +65,18 @@ class InterviewController extends Controller
         $form = new InterviewJoinForm();
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            try {
+                $model = $this->interviewService->joinToInterview(
+                    $form->lastName,
+                    $form->firstName,
+                    $form->email,
+                    $form->date
+                );
 
-            $model = $this->interviewService->joinToInterview(
-                $form->lastName,
-                $form->firstName,
-                $form->email,
-                $form->date
-            );
-
-            return $this->redirect(['view', 'id' => $model->id]);
+                return $this->redirect(['view', 'id' => $model->id]);
+            } catch (\DomainException $e) {
+                Yii::$app->session->setFlash('error', $e->getMessage());
+            }
         }
 
         return $this->render('join', [
