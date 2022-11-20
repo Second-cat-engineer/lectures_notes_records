@@ -80,4 +80,11 @@ class Order extends ActiveRecord
     {
         return $this->hasMany(Vacation::class, ['order_id' => 'id']);
     }
+
+    public static function create($date): Order
+    {
+        $order = new self();
+        $order->date = $date;
+        return $order;
+    }
 }

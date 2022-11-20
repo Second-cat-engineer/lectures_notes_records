@@ -84,4 +84,32 @@ class Recruit extends ActiveRecord
     {
         return $this->hasOne(Order::class, ['id' => 'order_id']);
     }
+
+    public static function create(Employee $employee, Order $order, $date): Recruit
+    {
+        $recruit = new self();
+        $recruit->populateRelation('employee', $employee);
+        $recruit->populateRelation('order', $order);
+        $recruit->date = $date;
+        return $recruit;
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $related = $this->getRelatedRecords();
+            /** @var Employee $employee */
+            if (isset($related['employee']) && $employee = $related['employee']) {
+                $employee->save();
+                $this->employee_id = $employee->id;
+            }
+            /** @var Order $order */
+            if (isset($related['order']) && $order = $related['order']) {
+                $order->save();
+                $this->order_id = $order->id;
+            }
+            return true;
+        }
+        return false;
+    }
 }

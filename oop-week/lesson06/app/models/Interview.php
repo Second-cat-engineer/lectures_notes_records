@@ -79,6 +79,13 @@ class Interview extends ActiveRecord
         $this->status = self::STATUS_REJECT;
     }
 
+    public function passBy(Employee $employee)
+    {
+        $this->guardIsNotPassed();
+        $this->populateRelation('employee', $employee);
+        $this->status = self::STATUS_PASS;
+    }
+
     public function remove()
     {
 
@@ -118,6 +125,27 @@ class Interview extends ActiveRecord
     public function isRejected()
     {
         return $this->status === Interview::STATUS_REJECT;
+    }
+
+    private function guardIsNotPassed()
+    {
+        if ($this->isPassed()) {
+            throw new \DomainException('Interview is already passed.');
+        }
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $related = $this->getRelatedRecords();
+            /** @var Employee $employee */
+            if (isset($related['employee']) && $employee = $related['employee']) {
+                $employee->save();
+                $this->employee_id = $employee->id;
+            }
+            return true;
+        }
+        return false;
     }
 
     public function afterSave($insert, $changedAttributes)

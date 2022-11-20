@@ -71,4 +71,28 @@ class Contract extends ActiveRecord
             'close_reason' => 'Close Reason',
         ];
     }
+
+    public static function create(Employee $employee, $lastName, $firstName, $contractDate): Contract
+    {
+        $contract = new self();
+        $contract->populateRelation('employee', $employee);
+        $contract->first_name = $firstName;
+        $contract->last_name = $lastName;
+        $contract->date_open = $contractDate;
+        return $contract;
+    }
+
+    public function beforeSave($insert): bool
+    {
+        if (parent::beforeSave($insert)) {
+            $related = $this->getRelatedRecords();
+            /** @var Employee $employee */
+            if (isset($related['employee']) && $employee = $related['employee']) {
+                $employee->save();
+                $this->employee_id = $employee->id;
+            }
+            return true;
+        }
+        return false;
+    }
 }

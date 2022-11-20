@@ -2,23 +2,30 @@
 
 namespace app\controllers;
 
-use app\models\Contract;
+use app\forms\EmployeeCreateForm;
 use app\models\Interview;
-use app\models\Order;
-use app\models\Recruit;
+use app\services\dto\RecruitData;
+use app\services\StaffService;
 use Yii;
 use app\models\Employee;
 use app\forms\search\EmployeeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\ServerErrorHttpException;
 
 /**
  * EmployeeController implements the CRUD actions for Employee model.
  */
 class EmployeeController extends Controller
 {
+    private StaffService $staffService;
+
+    public function __construct($id, $module, StaffService $staffService, $config = [])
+    {
+        $this->staffService = $staffService;
+        parent::__construct($id, $module, $config = []);
+    }
+
     /**
      * @inheritdoc
      */
@@ -34,10 +41,6 @@ class EmployeeController extends Controller
         ];
     }
 
-    /**
-     * Lists all Employee models.
-     * @return mixed
-     */
     public function actionIndex()
     {
         $searchModel = new EmployeeSearch();
@@ -49,11 +52,6 @@ class EmployeeController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single Employee model.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionView(int $id)
     {
         return $this->render('view', [
@@ -61,80 +59,50 @@ class EmployeeController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Employee model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @param integer|null $interview_id
-     * @return mixed
-     * @throws NotFoundHttpException
-     * @throws ServerErrorHttpException
-     */
-    public function actionCreate(int $interview_id = null)
+    public function actionCreate()
     {
-        $model = new Employee();
-        $model->order_date = date('Y-m-d');
-        $model->contract_date = date('Y-m-d');
-        $model->recruit_date = date('Y-m-d');
+        $form = new EmployeeCreateForm();
 
-        if ($interview_id) {
-            $interview = $this->findInterviewModel($interview_id);
-            $model->last_name = $interview->last_name;
-            $model->first_name = $interview->first_name;
-            $model->email = $interview->email;
-        } else {
-            $interview = null;
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            $employee = $this->staffService->createEmployee(
+                new RecruitData($form->firstName, $form->lastName, $form->address, $form->email),
+                $form->orderDate,
+                $form->contractDate,
+                $form->recruitDate
+            );
+
+            Yii::$app->session->setFlash('success', 'Employee is recruit.');
+            return $this->redirect(['view', 'id' => $employee->id]);
         }
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                if ($interview) {
-                    $interview->status = Interview::STATUS_PASS;
-                    $interview->save();
-                }
-
-                $model->save(false);
-
-                $order = new Order();
-                $order->date = $model->order_date;
-                $order->save(false);
-
-                $contract = new Contract();
-                $contract->employee_id = $model->id;
-                $contract->last_name = $model->last_name;
-                $contract->first_name = $model->first_name;
-                $contract->date_open = $model->contract_date;
-                $contract->save(false);
-
-                $recruit = new Recruit();
-                $recruit->employee_id = $model->id;
-                $recruit->order_id = $order->id;
-                $recruit->date = $model->recruit_date;
-                $recruit->save(false);
-
-
-                $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Employee is recruit.');
-
-                return $this->redirect(['view', 'id' => $model->id]);
-
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new ServerErrorHttpException($e->getMessage());
-            }
-        }
-
         return $this->render('create', [
-            'model' => $model,
+            'createForm' => $form,
         ]);
     }
 
-    /**
-     * Updates an existing Employee model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
+    public function actionCreateByInterview($interview_id)
+    {
+        $interview = $this->findInterviewModel($interview_id);
+
+        $form = new EmployeeCreateForm($interview);
+
+        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
+            $employee = $this->staffService->createEmployeeByInterview(
+                $interview->id,
+                new RecruitData($form->firstName, $form->lastName, $form->address, $form->email),
+                $form->orderDate,
+                $form->contractDate,
+                $form->recruitDate
+            );
+
+            Yii::$app->session->setFlash('success', 'Employee is recruit.');
+            return $this->redirect(['view', 'id' => $employee->id]);
+        }
+
+        return $this->render('create', [
+            'createForm' => $form,
+        ]);
+    }
+
     public function actionUpdate(int $id)
     {
         $model = $this->findModel($id);
@@ -148,12 +116,6 @@ class EmployeeController extends Controller
         }
     }
 
-    /**
-     * Deletes an existing Employee model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
     public function actionDelete(int $id)
     {
         $this->findModel($id)->delete();
