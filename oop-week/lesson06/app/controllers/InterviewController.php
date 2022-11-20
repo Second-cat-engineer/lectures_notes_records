@@ -6,7 +6,7 @@ use app\forms\InterviewEditForm;
 use app\forms\InterviewJoinForm;
 use app\forms\InterviewMoveForm;
 use app\forms\InterviewRejectForm;
-use app\services\StaffService;
+use app\services\InterviewService;
 use Yii;
 use app\models\Interview;
 use app\forms\search\InterviewSearch;
@@ -19,11 +19,11 @@ use yii\filters\VerbFilter;
  */
 class InterviewController extends Controller
 {
-    private StaffService $staffService;
+    private InterviewService $interviewService;
 
-    public function __construct($id, $module, StaffService $staffService, $config = [])
+    public function __construct($id, $module, InterviewService $interviewService, $config = [])
     {
-        $this->staffService = $staffService;
+        $this->interviewService = $interviewService;
         parent::__construct($id, $module, $config = []);
     }
 
@@ -66,7 +66,7 @@ class InterviewController extends Controller
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
 
-            $model = $this->staffService->joinToInterview(
+            $model = $this->interviewService->joinToInterview(
                 $form->lastName,
                 $form->firstName,
                 $form->email,
@@ -88,7 +88,7 @@ class InterviewController extends Controller
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
 
-            $this->staffService->editInterview(
+            $this->interviewService->editInterview(
                 $interview->id,
                 $form->lastName,
                 $form->firstName,
@@ -111,7 +111,7 @@ class InterviewController extends Controller
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
 
-            $this->staffService->moveInterview($interview->id, $form->date);
+            $this->interviewService->moveInterview($interview->id, $form->date);
 
             return $this->redirect(['view', 'id' => $interview->id]);
         }
@@ -129,7 +129,7 @@ class InterviewController extends Controller
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
 
-            $this->staffService->rejectInterview($interview->id, $form->reason);
+            $this->interviewService->rejectInterview($interview->id, $form->reason);
 
             return $this->redirect(['view', 'id' => $interview->id]);
         }
@@ -143,7 +143,7 @@ class InterviewController extends Controller
     public function actionDelete(int $id)
     {
         $interview = $this->findModel($id);
-        $this->staffService->deleteInterview($interview->id);
+        $this->interviewService->deleteInterview($interview->id);
 
         return $this->redirect(['index']);
     }

@@ -22,16 +22,16 @@ use app\repositories\PositionRepository;
 use app\repositories\RecruitRepository;
 use app\services\dto\RecruitData;
 
-class StaffService
+class EmployeeService
 {
     private InterviewRepository $interviewRepository;
     private EventDispatcherInterface $eventDispatcher;
 
-    private $employeeRepository;
-    private $contractRepository;
-    private $recruitRepository;
-    private $positionRepository;
-    private $transactionManager;
+    private EmployeeRepository $employeeRepository;
+    private ContractRepository $contractRepository;
+    private RecruitRepository $recruitRepository;
+    private PositionRepository $positionRepository;
+    private TransactionManager $transactionManager;
 
     public function __construct(
         InterviewRepository $interviewRepository,
@@ -53,52 +53,6 @@ class StaffService
         $this->transactionManager = $transactionManager;
     }
 
-    public function joinToInterview($lastName, $firstName, $email, $date): Interview
-    {
-        $interview = Interview::join($lastName, $firstName, $email, $date);
-        $this->interviewRepository->add($interview);
-
-        $this->eventDispatcher->dispatch(new InterviewJoinEvent($interview));
-
-        return $interview;
-    }
-
-    public function editInterview(int $id, $lastName, $firstName, $email): void
-    {
-        $interview = $this->interviewRepository->find($id);
-        $interview->editData($lastName, $firstName, $email);
-        $this->interviewRepository->save($interview);
-
-        $this->eventDispatcher->dispatch(new InterviewEditEvent($interview));
-    }
-
-    public function moveInterview(int $id, $date): void
-    {
-        $interview = $this->interviewRepository->find($id);
-        $interview->move($date);
-        $this->interviewRepository->save($interview);
-
-        $this->eventDispatcher->dispatch(new InterviewMoveEvent($interview));
-    }
-
-    public function rejectInterview($id, $reason): void
-    {
-        $interview = $this->interviewRepository->find($id);
-        $interview->reject($reason);
-        $this->interviewRepository->save($interview);
-
-        $this->eventDispatcher->dispatch(new InterviewRejectEvent($interview));
-    }
-
-    public function deleteInterview(int $id): void
-    {
-        $interview = $this->interviewRepository->find($id);
-        $interview->remove();
-        $this->interviewRepository->delete($interview);
-
-        $this->eventDispatcher->dispatch(new InterviewDeleteEvent($interview));
-    }
-
     public function createEmployeeByInterview($interviewId, RecruitData $recruitData, $orderDate, $contractDate, $recruitDate)
     {
         $interview = $this->interviewRepository->find($interviewId);
@@ -110,7 +64,7 @@ class StaffService
         );
         $interview->passBy($employee);
         $contract = Contract::create($employee, $recruitData->lastName, $recruitData->firstName, $contractDate);
-        $recruit = Recruit::create($employee, $orderDate, $recruitDate);
+        $recruit = Recruit::create($employee, Order::create($orderDate), $recruitDate);
 
         $transaction = $this->transactionManager->begin();
         try {
@@ -123,6 +77,15 @@ class StaffService
             $transaction->rollBack();
             throw $e;
         }
+
+        // Или можно сделать так.
+//        $this->transactionManager->execute(function () use ($employee, $recruit, $contract) {
+//            $this->employeeRepository->add($employee);
+//            $this->contractRepository->add($contract);
+//            $this->recruitRepository->add($recruit);
+//        });
+
+
         $this->eventDispatcher->dispatch(new EmployeeRecruitByInterviewEvent($employee, $interview));
         return $employee;
     }

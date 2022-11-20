@@ -5,7 +5,7 @@ namespace app\controllers;
 use app\forms\EmployeeCreateForm;
 use app\models\Interview;
 use app\services\dto\RecruitData;
-use app\services\StaffService;
+use app\services\EmployeeService;
 use Yii;
 use app\models\Employee;
 use app\forms\search\EmployeeSearch;
@@ -18,11 +18,11 @@ use yii\filters\VerbFilter;
  */
 class EmployeeController extends Controller
 {
-    private StaffService $staffService;
+    private EmployeeService $employeeService;
 
-    public function __construct($id, $module, StaffService $staffService, $config = [])
+    public function __construct($id, $module, EmployeeService $employeeService, $config = [])
     {
-        $this->staffService = $staffService;
+        $this->employeeService = $employeeService;
         parent::__construct($id, $module, $config = []);
     }
 
@@ -64,7 +64,7 @@ class EmployeeController extends Controller
         $form = new EmployeeCreateForm();
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-            $employee = $this->staffService->createEmployee(
+            $employee = $this->employeeService->createEmployee(
                 new RecruitData($form->firstName, $form->lastName, $form->address, $form->email),
                 $form->orderDate,
                 $form->contractDate,
@@ -86,7 +86,7 @@ class EmployeeController extends Controller
         $form = new EmployeeCreateForm($interview);
 
         if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-            $employee = $this->staffService->createEmployeeByInterview(
+            $employee = $this->employeeService->createEmployeeByInterview(
                 $interview->id,
                 new RecruitData($form->firstName, $form->lastName, $form->address, $form->email),
                 $form->orderDate,
