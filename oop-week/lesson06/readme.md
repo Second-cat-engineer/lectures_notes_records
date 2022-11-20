@@ -137,10 +137,6 @@ ___
 Логирование и отправка письма вынесены из StarrService в классы Logger и Notifier (при инициализации приложения
 помещаются в di). Реализация в ветке `refactoring/v4`.
 
-
-
-
-
 ___
 #### Принять сотрудника
 ```php
@@ -151,6 +147,9 @@ ___
 ```php
 $assignment = Assignment::assign($emplyee, $position, $date);
 ```
+___
+
+Конечный вариант приложения в ветке `refactoring/v5`.
 
 
 
