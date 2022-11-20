@@ -7,10 +7,10 @@ use yii\base\Model;
 
 class EmployeeCreateForm extends Model
 {
-    public string $firstName;
-    public string $lastName;
-    public string $address;
-    public string $email;
+    public ?string $firstName = null;
+    public ?string $lastName = null;
+    public ?string $address = null;
+    public ?string $email = null;
     public $orderDate;
     public $contractDate;
     public $recruitDate;
