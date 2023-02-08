@@ -2,4 +2,4 @@
 
 Лекции по книги Head First "Паттерны проектирования".
 
-1. [Стратегия (Strategy)](./01Strategy/readme.md)
+1. [Стратегия (Strategy)](Strategy/readme.md)
