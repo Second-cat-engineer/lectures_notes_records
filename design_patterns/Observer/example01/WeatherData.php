@@ -10,6 +10,16 @@ class WeatherData implements Subject
     private float $humidity;
     private float $pressure;
 
+    public function getTemperature(): float
+    {
+        return $this->temperature;
+    }
+
+    public function getHumidity(): float
+    {
+        return $this->humidity;
+    }
+
     public function registerObserver(Observer $observer)
     {
         $this->observers[get_class($observer)] = $observer;
@@ -23,7 +33,7 @@ class WeatherData implements Subject
     public function notifyObservers()
     {
         foreach ($this->observers as $observer) {
-            $observer->update($this->temperature, $this->humidity, $this->pressure);
+            $observer->update();
         }
     }
 

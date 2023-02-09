@@ -14,10 +14,10 @@ class CurrentConditionsDisplay implements Observer, DisplayElement
         $this->weatherData->registerObserver($this);
     }
 
-    public function update(float $temp, float $humidity, float $pressure)
+    public function update()
     {
-        $this->temperature = $temp;
-        $this->humidity = $humidity;
+        $this->temperature = $this->weatherData->getTemperature();
+        $this->humidity = $this->weatherData->getHumidity();
 
         $this->display();
     }
