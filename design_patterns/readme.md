@@ -5,6 +5,7 @@
 1. [Стратегия (Strategy)](Strategy/readme.md)
 2. [Наблюдатель (Observer)](Observer/readme.md)
 3. [Декоратор (Decorator)](Decorator/readme.md)
+4. [Фабричный метод (Factory Method)](FactoryMethod/readme.md)
 
 
 
