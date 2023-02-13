@@ -8,7 +8,7 @@
 4. [Фабричный метод (Factory Method)](FactoryMethod/readme.md)
 5. [Абстрактная фабрика(AbstractFactory)](AbstractFactory/readme.md)
 6. [Одиночка (Singleton)](Singleton/readme.md)
-
+7. [Команда (Command)](Command/readme.md)
 
 
 #### Принципы:
