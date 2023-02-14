@@ -9,6 +9,7 @@
 5. [Абстрактная фабрика(AbstractFactory)](AbstractFactory/readme.md)
 6. [Одиночка (Singleton)](Singleton/readme.md)
 7. [Команда (Command)](Command/readme.md)
+8. [Адаптер (Adapter)](Adapter/readme.md)
 
 
 #### Принципы:
