@@ -12,6 +12,7 @@
 8. [Адаптер (Adapter)](Adapter/readme.md)
 9. [Шаблонный метод (Template Method)](TemplateMethod/readme.md)
 10. [Итератор (Iterator)](Iterator/readme.md)
+11. [Компоновщик (Composite)](Composite/readme.md)
 
 
 #### Принципы:
