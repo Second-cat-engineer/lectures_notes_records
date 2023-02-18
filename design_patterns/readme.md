@@ -13,6 +13,7 @@
 9. [Шаблонный метод (Template Method)](TemplateMethod/readme.md)
 10. [Итератор (Iterator)](Iterator/readme.md)
 11. [Компоновщик (Composite)](Composite/readme.md)
+12. [Состояние (State)](State/readme.md)
 
 
 #### Принципы:
