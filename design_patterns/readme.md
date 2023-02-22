@@ -36,6 +36,13 @@
 12. [Состояние (State)](State/readme.md)
 13. [Заместитель (Proxy)](Proxy/readme.md)
 
+// TODO Необходимо дополнить примерами
+14. [Мост (Bridge)](Bridge/readme.md)
+15. [Строитель (Builder)](Builder/readme.md)
+16. [Цепочка обязанностей (Chain of Responsibility)](ChainOfResponsibility/readme.md)
+
+
+
 
 #### Принципы:
 - Инкапсулируйте то, что изменяется;
