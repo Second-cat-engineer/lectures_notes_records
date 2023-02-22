@@ -26,7 +26,7 @@
 2. [Наблюдатель (Observer)](Observer/readme.md)
 3. [Декоратор (Decorator)](Decorator/readme.md)
 4. [Фабричный метод (Factory Method)](FactoryMethod/readme.md)
-5. [Абстрактная фабрика(AbstractFactory)](AbstractFactory/readme.md)
+5. [Абстрактная фабрика(Abstract Factory)](AbstractFactory/readme.md)
 6. [Одиночка (Singleton)](Singleton/readme.md)
 7. [Команда (Command)](Command/readme.md)
 8. [Адаптер (Adapter)](Adapter/readme.md)
@@ -41,7 +41,13 @@
 15. [Строитель (Builder)](Builder/readme.md)
 16. [Цепочка обязанностей (Chain of Responsibility)](ChainOfResponsibility/readme.md)
 
-
+17. Приспособленец (Flyweight)
+18. Интерпретатор (Interpreter)
+19. Посредник (Mediator)
+20. Хранитель (Memento)
+21. Прототип (Prototype)
+22. Посетитель (Visitor)
+23. Фасад (Facade)
 
 
 #### Принципы:
