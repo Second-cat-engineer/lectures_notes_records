@@ -10,45 +10,41 @@
 Наличие формального механизма описания позволяет создавать чрезвычайно полезные каталоги паттернов.
 
 ### Классификация паттернов проектирования в зависимости от их цели:
-- Порождающие - связаны с созданием экземпляров объектов; все они обеспечивают средства логической изоляции клиента от создаваемых объектов;
-- Поведенческие - относятся к взаимодействиям и распределению обязанностей между классами и объектами;
-- Структурные - объединяют классы или объекты в более крупные структуры.
+
+#### Порождающие - обеспечивают средства логической изоляции клиента от создаваемых объектов:
+1. [Абстрактная фабрика(Abstract Factory)](AbstractFactory/readme.md)
+2. [Строитель (Builder)](Builder/readme.md)
+3. [Фабричный метод (Factory Method)](FactoryMethod/readme.md)
+4. Прототип (Prototype)
+5. [Одиночка (Singleton)](Singleton/readme.md)
+
+#### Структурные - объединяют классы или объекты в более крупные структуры:
+6. [Адаптер (Adapter)](Adapter/readme.md)
+7. [Мост (Bridge)](Bridge/readme.md)
+8. [Компоновщик (Composite)](Composite/readme.md)
+9. [Декоратор (Decorator)](Decorator/readme.md)
+10. Фасад (Facade)
+11. Приспособленец (Flyweight)
+12. [Заместитель (Proxy)](Proxy/readme.md)
+
+#### Поведения - относятся к взаимодействиям и распределению обязанностей между классами и объектами:
+13. [Цепочка обязанностей (Chain of Responsibility)](ChainOfResponsibility/readme.md)
+14. [Команда (Command)](Command/readme.md)
+15. Интерпретатор (Interpreter)
+16. [Итератор (Iterator)](Iterator/readme.md)
+17. Посредник (Mediator)
+18. Хранитель (Memento)
+19. [Наблюдатель (Observer)](Observer/readme.md)
+20. [Состояние (State)](State/readme.md)
+21. [Стратегия (Strategy)](Strategy/readme.md)
+22. [Шаблонный метод (Template Method)](TemplateMethod/readme.md)
+23. Посетитель (Visitor)
 
 
 ### Классификация паттернов проектирования в зависимости от того, относится паттерн к классам или объектам:
 - Паттерны классов - описывают определение отношений между классами посредством наследования (Шаблонный метод, адаптер, Фабричный метод, Интерпретатор);
 - Паттерны объектов - описывают отношения между объектами, прежде всего относящиеся к композиции. Отношения в паттернах
-объектов обычно определяются на стадии выполнения, а следовательно, обладают большей динамичностью и гибкостью.
-
-
-
-1. [Стратегия (Strategy)](Strategy/readme.md)
-2. [Наблюдатель (Observer)](Observer/readme.md)
-3. [Декоратор (Decorator)](Decorator/readme.md)
-4. [Фабричный метод (Factory Method)](FactoryMethod/readme.md)
-5. [Абстрактная фабрика(Abstract Factory)](AbstractFactory/readme.md)
-6. [Одиночка (Singleton)](Singleton/readme.md)
-7. [Команда (Command)](Command/readme.md)
-8. [Адаптер (Adapter)](Adapter/readme.md)
-9. [Шаблонный метод (Template Method)](TemplateMethod/readme.md)
-10. [Итератор (Iterator)](Iterator/readme.md)
-11. [Компоновщик (Composite)](Composite/readme.md)
-12. [Состояние (State)](State/readme.md)
-13. [Заместитель (Proxy)](Proxy/readme.md)
-
-// TODO Необходимо дополнить примерами
-14. [Мост (Bridge)](Bridge/readme.md)
-15. [Строитель (Builder)](Builder/readme.md)
-16. [Цепочка обязанностей (Chain of Responsibility)](ChainOfResponsibility/readme.md)
-
-17. Приспособленец (Flyweight)
-18. Интерпретатор (Interpreter)
-19. Посредник (Mediator)
-20. Хранитель (Memento)
-21. Прототип (Prototype)
-22. Посетитель (Visitor)
-23. Фасад (Facade)
-
+  объектов обычно определяются на стадии выполнения, а следовательно, обладают большей динамичностью и гибкостью.
 
 #### Принципы:
 - Инкапсулируйте то, что изменяется;
