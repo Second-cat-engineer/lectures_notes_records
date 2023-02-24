@@ -4,7 +4,17 @@ namespace Singleton;
 
 class Singleton
 {
-    static private $instance;
+    private static $instance;
+    private array $props = [];
+
+    static public function getInstance()
+    {
+        if (empty(static::$instance)) {
+            static::$instance = new static();
+        }
+
+        return static::$instance;
+    }
 
     private function __construct()
     {
@@ -18,12 +28,13 @@ class Singleton
     {
     }
 
-    static public function getInstance()
+    public function setProperty(string $key, string $value)
     {
-        if (empty(static::$instance)) {
-            static::$instance = new static();
-        }
+        $this->props[$key] = $value;
+    }
 
-        return static::$instance;
+    public function getProperty(string $key)
+    {
+        return $this->props[$key];
     }
 }
