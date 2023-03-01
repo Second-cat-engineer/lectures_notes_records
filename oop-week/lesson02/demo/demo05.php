@@ -94,6 +94,7 @@ class Employee
 
     public function addPhone(Phone $phone)
     {
+        /** @var Phone $item */
         foreach ($this->phones as $item) {
             if ($item->isEqualTo($phone)) {
                  throw new Exception('Phone already exist.');
@@ -105,6 +106,7 @@ class Employee
 
     public function removePhone(Phone $phone)
     {
+        /** @var Phone $item */
         foreach ($this->phones as $i => $item) {
             if ($item->isEqualTo($phone)) {
                 unset($this->phones[$i]);
